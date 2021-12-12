@@ -1,13 +1,14 @@
-locals{
-    application_name        = "ecma"
-    app_name_with_local_env = "${local.application_name}-${var.sub_environment}"
-    location                = var.location
-    service_bus_namespace   = "ecma-servicebus"
+locals {
+  application_name      = "ecma"
+  app_name_with_env     = "${local.application_name}-${var.environment}"
+  app_name_with_sub_env = "${local.application_name}-${var.sub_environment}"
+  location              = var.location
+  service_bus_namespace = "ecma-servicebus"
 }
 
 resource "azurerm_resource_group" "primary" {
-  name      = local.app_name_with_local_env
-  location  = var.location
+  name     = local.app_name_with_sub_env
+  location = local.location
 }
 
 resource "azurerm_storage_account" "sa" {
@@ -19,21 +20,40 @@ resource "azurerm_storage_account" "sa" {
 }
 
 resource "azurerm_app_service_plan" "asp" {
-  name                = "${app_name_with_local_env}-asp"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  name                = "${local.app_name_with_sub_env}-asp"
+  location            = azurerm_resource_group.primary.location
+  resource_group_name = azurerm_resource_group.primary.name
 
   sku {
-    tier = "Free"
-    size = "F1"
+    tier = "Standard"
+    size = "S1"
   }
 }
 
+resource "azurerm_application_insights" "ai" {
+  name                = "${local.app_name_with_sub_env}-ai"
+  location            = azurerm_resource_group.primary.location
+  resource_group_name = azurerm_resource_group.primary.name
+  application_type    = "web"
+}
+
 resource "azurerm_function_app" "ecma_func_app" {
-  name                       = local.app_name_with_local_env
+  name                       = local.app_name_with_sub_env
   location                   = azurerm_resource_group.primary.location
   resource_group_name        = azurerm_resource_group.primary.name
   app_service_plan_id        = azurerm_app_service_plan.asp.id
   storage_account_name       = azurerm_storage_account.sa.name
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
+
+  app_settings = {
+    APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.ai.instrumentation_key}"
+    ServiceBusConnection           = "${azurerm_servicebus_namespace.sb_namespace.default_primary_connection_string}"
+    ConnectionString               = "Server=${azurerm_sql_server.primary_server.name}.database.windows.net;Database=${azurerm_sql_database.primary_db.name};Trusted_Connection=True;"
+    EcmaTopicName                  = "${azurerm_servicebus_topic.sb_topic.name}"
+    EcmaSubscription               = "${azurerm_servicebus_subscription.ecma_sub.name}"
+  }
+
+  site_config {
+    always_on = "true"
+  }
 }

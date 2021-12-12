@@ -9,5 +9,5 @@ resource "azurerm_servicebus_namespace" "sb_namespace" {
   resource_group_name = azurerm_resource_group.sb_primary.name
   sku                 = "Standard"
 
-  tags = local.tags
+  tags = var.tags
 }
