@@ -6,7 +6,23 @@ resource "azurerm_sql_server" "primary_server" {
   administrator_login          = "azureadmin"
   administrator_login_password = "Welcome@1234"
 
-  tags = tomap(var.tags)
+  tags = var.tags
+}
+
+resource "azurerm_sql_firewall_rule" "firewall_rule" {
+  name                = "AllowAzureResources"
+  resource_group_name = azurerm_resource_group.primary.name
+  server_name         = azurerm_sql_server.primary_server.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+
+resource "azurerm_sql_firewall_rule" "sql_admin_firewall_rule" {
+  name                = "faraz ip address"
+  resource_group_name = azurerm_resource_group.primary.name
+  server_name         = azurerm_sql_server.primary_server.name
+  start_ip_address    = "122.163.251.223"
+  end_ip_address      = "122.163.251.223"
 }
 
 resource "azurerm_sql_database" "primary_db" {
