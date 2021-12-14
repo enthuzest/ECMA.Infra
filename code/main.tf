@@ -47,6 +47,7 @@ resource "azurerm_function_app" "ecma_func_app" {
 
   app_settings = {
     APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.ai.instrumentation_key}"
+    FUNCTIONS_EXTENSION_VERSION    = "~4"
     ServiceBusConnection           = "${azurerm_servicebus_namespace.sb_namespace.default_primary_connection_string}"
     ConnectionString               = "Server=${azurerm_sql_server.primary_server.name}.database.windows.net;Database=${azurerm_sql_database.primary_db.name};Trusted_Connection=True;"
     EcmaTopicName                  = "${azurerm_servicebus_topic.sb_topic.name}"
