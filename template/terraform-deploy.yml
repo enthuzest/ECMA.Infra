@@ -14,6 +14,11 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - task: installTerragrunt@0
+              inputs:
+                terragruntversion: "0.36.3"
+              displayName: "Install Terragrunt 0.36.3"
+              
             - download: current
               artifact: terraform_artifacts
 
