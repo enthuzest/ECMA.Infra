@@ -30,4 +30,3 @@ stages:
             parameters:
               filePath: $(filePath)
               clientsecret: $(clientSecret)
-              environment: Dev

@@ -3,8 +3,6 @@ parameters:
   type: string
 - name: 'clientsecret'
   type: string
-- name: environment
-  type: string
 
 steps:
   - task: TerraformInstaller@0
