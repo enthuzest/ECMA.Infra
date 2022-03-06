@@ -3,11 +3,13 @@ parameters:
   type: string
 - name: 'clientsecret'
   type: string
+- name: environment
+  type: string
 
 jobs:
   - deployment:
-    #displayName: DEV 
-    #environment: DEV
+    displayName: Plan 
+    environment: ${{ parameters.environment }}
     strategy:
       runOnce:
         deploy:

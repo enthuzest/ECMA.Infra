@@ -8,7 +8,8 @@ pool:
 
 variables:
 - name: filePath
-  value: 'code/' 
+  value: 'code/'
+- name: environment
 
 stages:
   - stage: Dev_Plan
@@ -27,3 +28,4 @@ stages:
         parameters:
           folder: src
           clientsecret: $(clientSecret)
+          environment: Dev
