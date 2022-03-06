@@ -1,0 +1,41 @@
+parameters:
+  - name: "clientSecret"
+    type: string
+  - name: "filePath"
+    type: string
+
+steps:
+  - task: TerraformInstaller@0
+    inputs:
+      terraformVersion: "1.0.4"
+    displayName: "Install Terraform 1.0.4"
+
+  - task: installTerragrunt@0
+    inputs:
+      terragruntversion: "0.36.3"
+    displayName: "Install Terragrunt 0.36.3"
+
+  - script: |
+      ls $(System.DefaultWorkingDirectory)
+      echo "terraform build started.."
+      cd $(System.DefaultWorkingDirectory)/${{ parameters.filePath }}
+      SET ARM_CLIENT_ID=da7ad657-b2e3-4769-a1af-cc221eb0dc21
+      SET ARM_CLIENT_SECRET=${{ parameters.clientSecret }}
+      SET ARM_SUBSCRIPTION_ID=db371aa4-50d0-45d5-866b-3638e8a8e53d
+      SET ARM_TENANT_ID=3026ab1c-66a5-46df-83be-7b183a607557
+      terragrunt init --terragrunt-config ./terragrunt.dev.hcl
+      terragrunt plan --terragrunt-config ./terragrunt.dev.hcl
+    displayName: "Init & Plan"
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(System.DefaultWorkingDirectory)
+      Contents: |
+        **/*
+        !${{ parameters.filePath }}/.terraform/**/*
+      TargetFolder: "$(Build.ArtifactStagingDirectory)"
+    displayName: "Copy Artifacts"
+
+  - publish: "$(Build.ArtifactStagingDirectory)"
+    artifact: terraform_artifacts
+    displayName: "Publish Artifact"

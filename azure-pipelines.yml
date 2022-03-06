@@ -1,0 +1,32 @@
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger:
+  - master
+
+pool:
+  vmImage: windows-2022
+
+variables:
+- name: filePath
+  value: 'code/'
+- name: environment
+
+stages:
+  - stage: Dev_Plan
+    jobs:
+      - job: Plan
+        steps:
+          - template: template/terraform-build.yml
+            parameters:
+              clientsecret: $(clientSecret)
+              filePath: $(filePath)
+
+  - stage: Dev_Apply
+    dependsOn: [Dev_Plan]
+    jobs:
+      - job: Plan
+        steps:
+          - template: template/terraform-deploy.yml
+            parameters:
+              filePath: $(filePath)
+              clientsecret: $(clientSecret)

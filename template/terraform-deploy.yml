@@ -1,0 +1,32 @@
+parameters:
+- name: 'filePath'
+  type: string
+- name: 'clientsecret'
+  type: string
+
+steps:
+  - task: TerraformInstaller@0
+    inputs:
+      terraformVersion: "1.0.4"
+    displayName: "Install Terraform 1.0.4"
+
+  - task: installTerragrunt@0
+    inputs:
+      terragruntversion: "0.36.3"
+    displayName: "Install Terragrunt 0.36.3"
+
+  - download: current
+    artifact: terraform_artifacts
+    
+  - script: |
+        echo "Deploy to Move to directory"
+        ls $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.filePath }}
+        cd $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.filePath }}
+        SET ARM_CLIENT_ID=da7ad657-b2e3-4769-a1af-cc221eb0dc21
+        SET ARM_CLIENT_SECRET=${{ parameters.clientSecret }}
+        SET ARM_SUBSCRIPTION_ID=db371aa4-50d0-45d5-866b-3638e8a8e53d
+        SET ARM_TENANT_ID=3026ab1c-66a5-46df-83be-7b183a607557
+        terragrunt init --terragrunt-config ./terragrunt.dev.hcl
+        terragrunt plan --terragrunt-config ./terragrunt.dev.hcl
+        terragrunt apply --terragrunt-config ./terragrunt.dev.hcl -auto-approve
+    displayName: "Apply"
