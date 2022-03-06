@@ -14,7 +14,7 @@ variables:
 stages:
   - stage: Dev_Plan
     jobs:
-      - job: DevPlan
+      - job: Plan
         steps:
           - template: template/terraform-build.yml
             parameters:
@@ -22,10 +22,10 @@ stages:
               filePath: $(filePath)
 
   - stage: Dev_Apply
-    dependsOn: [Dev_Plan]
+    dependsOn: [Plan]
     jobs:
       - template: template/terraform-deploy.yml
         parameters:
-          folder: src
+          filePath: $(filePath)
           clientsecret: $(clientSecret)
           environment: Dev

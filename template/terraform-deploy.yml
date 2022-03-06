@@ -1,5 +1,5 @@
 parameters:
-- name: 'folder'
+- name: 'filePath'
   type: string
 - name: 'clientsecret'
   type: string
@@ -18,14 +18,14 @@ jobs:
               inputs:
                 terragruntversion: "0.36.3"
               displayName: "Install Terragrunt 0.36.3"
-              
+
             - download: current
               artifact: terraform_artifacts
 
             - script: |
                   echo "Deploy to Move to directory"
-                  ls $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.folder }}
-                  cd $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.folder }}
+                  ls $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.filePath }}
+                  cd $(Pipeline.Workspace)/terraform_artifacts/${{ parameters.filePath }}
                   SET ARM_CLIENT_ID=da7ad657-b2e3-4769-a1af-cc221eb0dc21
                   SET ARM_CLIENT_SECRET=${{ parameters.clientSecret }}
                   SET ARM_SUBSCRIPTION_ID=db371aa4-50d0-45d5-866b-3638e8a8e53d
