@@ -24,8 +24,10 @@ stages:
   - stage: Dev_Apply
     dependsOn: [Dev_Plan]
     jobs:
-      - template: template/terraform-deploy.yml
-        parameters:
-          filePath: $(filePath)
-          clientsecret: $(clientSecret)
-          environment: Dev
+      - job: Plan
+        steps:
+          - template: template/terraform-deploy.yml
+            parameters:
+              filePath: $(filePath)
+              clientsecret: $(clientSecret)
+              environment: Dev
