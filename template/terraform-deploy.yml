@@ -14,6 +14,11 @@ jobs:
       runOnce:
         deploy:
           steps:
+            - task: TerraformInstaller@0
+              inputs:
+                terraformVersion: "1.0.4"
+              displayName: "Install Terraform 1.0.4" 
+
             - task: installTerragrunt@0
               inputs:
                 terragruntversion: "0.36.3"
