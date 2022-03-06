@@ -22,7 +22,7 @@ stages:
               filePath: $(filePath)
 
   - stage: Dev_Apply
-    dependsOn: [Plan]
+    dependsOn: [Dev_Plan]
     jobs:
       - template: template/terraform-deploy.yml
         parameters:
