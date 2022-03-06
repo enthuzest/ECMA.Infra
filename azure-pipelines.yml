@@ -11,16 +11,16 @@ variables:
   value: 'code/' 
 
 stages:
-  - stage: Build
+  - stage: Dev Plan
     jobs:
-      - job: Build
+      - job: DevPlan
         steps:
           - template: template/terraform-build.yml
             parameters:
               clientsecret: $(clientSecret)
               filePath: $(filePath)
 
-  - stage: Dev
+  - stage: Dev Apply
     dependsOn: [Build]
     jobs:
       - template: template/terraform-deploy.yml

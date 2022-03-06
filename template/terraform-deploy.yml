@@ -6,8 +6,8 @@ parameters:
 
 jobs:
   - deployment:
-    displayName: DEV Apply
-    environment: dev-apply
+    #displayName: DEV 
+    #environment: DEV
     strategy:
       runOnce:
         deploy:
