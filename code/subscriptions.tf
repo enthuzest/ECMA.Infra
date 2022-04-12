@@ -1,15 +1,11 @@
 resource "azurerm_servicebus_subscription" "ecma_sub" {
   name                = "ecma-${var.sub_environment}-sub"
-  resource_group_name = azurerm_resource_group.sb_primary.name
-  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
-  topic_name          = azurerm_servicebus_topic.sb_topic.name
+  topic_id            = azurerm_servicebus_topic.sb_topic.id
   max_delivery_count  = 1
 }
 
 resource "azurerm_servicebus_subscription" "downstream_sub" {
   name                = "downstream-${var.sub_environment}-sub"
-  resource_group_name = azurerm_resource_group.sb_primary.name
-  namespace_name      = azurerm_servicebus_namespace.sb_namespace.name
-  topic_name          = azurerm_servicebus_topic.sb_topic.name
+  topic_id            = azurerm_servicebus_topic.sb_topic.id
   max_delivery_count  = 1
 }

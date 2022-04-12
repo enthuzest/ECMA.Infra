@@ -19,15 +19,12 @@ resource "azurerm_storage_account" "sa" {
   account_replication_type = "LRS"
 }
 
-resource "azurerm_app_service_plan" "asp" {
+resource "azurerm_service_plan" "asp" {
   name                = "${local.app_name_with_sub_env}-asp"
   location            = azurerm_resource_group.primary.location
   resource_group_name = azurerm_resource_group.primary.name
-
-  sku {
-    tier = "Standard"
-    size = "S1"
-  }
+  os_type             = "Windows"
+  sku_name            = "S1"
 }
 
 resource "azurerm_application_insights" "ai" {
@@ -41,7 +38,7 @@ resource "azurerm_function_app" "ecma_func_app" {
   name                       = local.app_name_with_sub_env
   location                   = azurerm_resource_group.primary.location
   resource_group_name        = azurerm_resource_group.primary.name
-  app_service_plan_id        = azurerm_app_service_plan.asp.id
+  app_service_plan_id        = azurerm_service_plan.asp.id
   storage_account_name       = azurerm_storage_account.sa.name
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
 
@@ -49,7 +46,7 @@ resource "azurerm_function_app" "ecma_func_app" {
     APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.ai.instrumentation_key}"
     FUNCTIONS_EXTENSION_VERSION    = "~4"
     ServiceBusConnection           = "${azurerm_servicebus_namespace.sb_namespace.default_primary_connection_string}"
-    ConnectionString               = "Server=${azurerm_sql_server.primary_server.name}.database.windows.net;Database=${azurerm_sql_database.primary_db.name};Trusted_Connection=True;"
+    ConnectionString               = "Server=${azurerm_mssql_server.primary_server.name}.database.windows.net;Database=${azurerm_mssql_database.primary_db.name};Trusted_Connection=True;"
     EcmaTopicName                  = "${azurerm_servicebus_topic.sb_topic.name}"
     EcmaSubscription               = "${azurerm_servicebus_subscription.ecma_sub.name}"
   }
