@@ -19,7 +19,7 @@ remote_state {
     backend = "azurerm"
     config  = {
         resource_group_name  = "state-${local.environment}-rg"
-        storage_account_name = "ecmatfstate${local.environment}"
+        storage_account_name = "ecmatfstateenv${local.environment}"
         container_name       = "state"
         key                  = "${local.workspace}/${local.sub_environment}/terraform.tfstate"
     }
