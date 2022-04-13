@@ -15,5 +15,5 @@ resource "azurerm_servicebus_namespace" "sb_namespace" {
 resource "azurerm_role_assignment" "ecma_function_app_access" {
   scope                = azurerm_servicebus_namespace.sb_namespace.id
   role_definition_name = "Reader"
-  principal_id         = azurerm_windows_function_app.ecma_func_app.id
+  principal_id         = azurerm_windows_function_app.ecma_func_app.identity.0.principal_id
 }
