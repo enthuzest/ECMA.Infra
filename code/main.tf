@@ -34,24 +34,29 @@ resource "azurerm_application_insights" "ai" {
   application_type    = "web"
 }
 
-resource "azurerm_function_app" "ecma_func_app" {
-  name                       = local.app_name_with_sub_env
-  location                   = azurerm_resource_group.primary.location
-  resource_group_name        = azurerm_resource_group.primary.name
-  app_service_plan_id        = azurerm_service_plan.asp.id
-  storage_account_name       = azurerm_storage_account.sa.name
-  storage_account_access_key = azurerm_storage_account.sa.primary_access_key
+resource "azurerm_windows_function_app" "ecma_func_app" {
+  name                        = local.app_name_with_sub_env
+  location                    = azurerm_resource_group.primary.location
+  resource_group_name         = azurerm_resource_group.primary.name
+  service_plan_id             = azurerm_service_plan.asp.id
+  storage_account_name        = azurerm_storage_account.sa.name
+  storage_account_access_key  = azurerm_storage_account.sa.primary_access_key
+  functions_extension_version = "~4"
 
   app_settings = {
-    APPINSIGHTS_INSTRUMENTATIONKEY = "${azurerm_application_insights.ai.instrumentation_key}"
-    FUNCTIONS_EXTENSION_VERSION    = "~4"
-    ServiceBusConnection           = "${azurerm_servicebus_namespace.sb_namespace.default_primary_connection_string}"
-    ConnectionString               = "Server=${azurerm_mssql_server.primary_server.name}.database.windows.net;Database=${azurerm_mssql_database.primary_db.name};Trusted_Connection=True;"
-    EcmaTopicName                  = "${azurerm_servicebus_topic.sb_topic.name}"
-    EcmaSubscription               = "${azurerm_servicebus_subscription.ecma_sub.name}"
+    ServiceBusConnection     = "Endpoint=sb://${azurerm_servicebus_namespace.sb_namespace.name}.servicebus.windows.net/;Authentication=Managed Identity"
+    ConnectionString         = "Server=${azurerm_mssql_server.primary_server.name}.database.windows.net;Database=${azurerm_mssql_database.primary_db.name};Trusted_Connection=True;"
+    EcmaTopicName            = "${azurerm_servicebus_topic.sb_topic.name}"
+    EcmaSubscription         = "${azurerm_servicebus_subscription.ecma_sub.name}"
+    WEBSITE_RUN_FROM_PACKAGE = 1
   }
 
   site_config {
-    always_on = "true"
+    always_on                = "true"
+    application_insights_key = azurerm_application_insights.ai.instrumentation_key
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 }
