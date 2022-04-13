@@ -34,11 +34,11 @@ resource "azurerm_application_insights" "ai" {
   application_type    = "web"
 }
 
-resource "azurerm_function_app" "ecma_func_app" {
+resource "azurerm_windows_function_app" "ecma_func_app" {
   name                       = local.app_name_with_sub_env
   location                   = azurerm_resource_group.primary.location
   resource_group_name        = azurerm_resource_group.primary.name
-  app_service_plan_id        = azurerm_service_plan.asp.id
+  service_plan_id            = azurerm_service_plan.asp.id
   storage_account_name       = azurerm_storage_account.sa.name
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
 
