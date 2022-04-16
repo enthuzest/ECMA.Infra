@@ -6,26 +6,31 @@ resource "azurerm_mssql_server" "primary_server" {
   administrator_login          = "azureadmin"
   administrator_login_password = "Welcome@1234"
 
+  azuread_administrator {
+    login_username = "learner-ad"
+    object_id      = "b33c7c69-6989-42a1-a443-a1f7322a041e"
+  }
+
   tags = var.tags
 }
 
 resource "azurerm_mssql_firewall_rule" "firewall_rule" {
-  name                = "AllowAzureResources"
-  server_id           = azurerm_mssql_server.primary_server.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
+  name             = "AllowAzureResources"
+  server_id        = azurerm_mssql_server.primary_server.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 resource "azurerm_mssql_firewall_rule" "sql_admin_firewall_rule" {
-  name                = "faraz ip address"
-  server_id           = azurerm_mssql_server.primary_server.id
-  start_ip_address    = "106.214.229.221"
-  end_ip_address      = "106.214.229.221"
+  name             = "faraz ip address"
+  server_id        = azurerm_mssql_server.primary_server.id
+  start_ip_address = "106.214.229.221"
+  end_ip_address   = "106.214.229.221"
 }
 
 resource "azurerm_mssql_database" "primary_db" {
-  name                = local.app_name_with_sub_env
-  server_id           = azurerm_mssql_server.primary_server.id
+  name      = local.app_name_with_sub_env
+  server_id = azurerm_mssql_server.primary_server.id
 
   tags = var.tags
 }
