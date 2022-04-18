@@ -24,8 +24,8 @@ resource "azurerm_mssql_firewall_rule" "firewall_rule" {
 resource "azurerm_mssql_firewall_rule" "sql_admin_firewall_rule" {
   name             = "faraz ip address"
   server_id        = azurerm_mssql_server.primary_server.id
-  start_ip_address = "106.214.229.221"
-  end_ip_address   = "106.214.229.221"
+  start_ip_address = "106.202.159.166"
+  end_ip_address   = "106.202.159.166"
 }
 
 resource "azurerm_mssql_database" "primary_db" {

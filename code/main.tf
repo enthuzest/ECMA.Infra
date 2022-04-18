@@ -44,14 +44,13 @@ resource "azurerm_function_app" "ecma_func_app" {
   version                    = "~4"
 
   app_settings = {
-    #ServiceBusConnection           = "Endpoint=sb://${azurerm_servicebus_namespace.sb_namespace.name}.servicebus.windows.net/;Authentication=Managed Identity"
-    ServiceBusConnection           = "${azurerm_servicebus_namespace.sb_namespace.default_primary_connection_string}"
-    ConnectionString               = "Server=${azurerm_mssql_server.primary_server.name}.database.windows.net;Database=${azurerm_mssql_database.primary_db.name};Authentication=Active Directory Managed Identity"
-    EcmaTopicName                  = "${azurerm_servicebus_topic.sb_topic.name}"
-    EcmaSubscription               = "${azurerm_servicebus_subscription.ecma_sub.name}"
-    WEBSITE_RUN_FROM_PACKAGE       = 1
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.ai.instrumentation_key
-    FUNCTIONS_WORKER_RUNTIME       = "dotnet"
+    ServiceBusConnection__fullyQualifiedNamespace = "${azurerm_servicebus_namespace.sb_namespace.name}.servicebus.windows.net"
+    ConnectionString                              = "Server=${azurerm_mssql_server.primary_server.name}.database.windows.net;Database=${azurerm_mssql_database.primary_db.name};Authentication=Active Directory Managed Identity"
+    EcmaTopicName                                 = "${azurerm_servicebus_topic.sb_topic.name}"
+    EcmaSubscription                              = "${azurerm_servicebus_subscription.ecma_sub.name}"
+    WEBSITE_RUN_FROM_PACKAGE                      = 1
+    APPINSIGHTS_INSTRUMENTATIONKEY                = azurerm_application_insights.ai.instrumentation_key
+    FUNCTIONS_WORKER_RUNTIME                      = "dotnet"
   }
 
   site_config {
