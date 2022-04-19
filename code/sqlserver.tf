@@ -1,10 +1,25 @@
+data "azurerm_key_vault" "kv" {
+  resource_group_name = "state-nprd-rg"
+  name                = "ecmasharedkv"
+}
+
+data "azurerm_key_vault_secret" "username" {
+  key_vault_id = data.azurerm_key_vault.kv.id
+  name         = "ecma-dev-username"
+}
+
+data "azurerm_key_vault_secret" "secret" {
+  key_vault_id = data.azurerm_key_vault.kv.id
+  name         = "ecma-dev-secret"
+}
+
 resource "azurerm_mssql_server" "primary_server" {
   name                         = local.app_name_with_env
   resource_group_name          = azurerm_resource_group.primary.name
   location                     = azurerm_resource_group.primary.location
   version                      = "12.0"
-  administrator_login          = "azureadmin"
-  administrator_login_password = "Welcome@1234"
+  administrator_login          = data.azurerm_key_vault_secret.username.value
+  administrator_login_password = data.azurerm_key_vault_secret.secret.value
 
   azuread_administrator {
     login_username = "learner-ad"
